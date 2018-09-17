@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CodeGen.ML.Interface;
+﻿using CodeGen.ML.Interface;
 using Microsoft.ML;
 using Microsoft.ML.Runtime.Data;
-using Microsoft.ML.Trainers;
-using Microsoft.ML.Transforms;
 using TextLoader = Microsoft.ML.Data.TextLoader;
 
-namespace CodeGen.ML
+namespace CodeGen.Core
 {
     public class HeartPipeline : IHeartPipeline
     {
         public LearningPipeline CreatePipeline<TData>(string dataPath)
         {
-            var pipeline = new LearningPipeline();
-            pipeline.Add(new TextLoader(dataPath).CreateFrom<TData>(separator: ','));
+            var pipeline = new LearningPipeline {new TextLoader(dataPath).CreateFrom<TData>(separator: ',')};
             return pipeline;
         }
 
