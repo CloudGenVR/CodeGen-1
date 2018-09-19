@@ -9,6 +9,6 @@ namespace CodeGen.ML
     public class HeartPrediction
     {
         [ColumnName("PredictedLabel")]
-        public string PredictedLabels;
+        public bool PredictedLabel;
     }
 }
