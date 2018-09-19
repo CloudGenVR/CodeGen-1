@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.ML.Core.Data;
-using Microsoft.ML.Runtime.Api;
+﻿using Microsoft.ML.Runtime.Api;
 
-namespace CodeGen.ML
+namespace CodeGen.MLNET.DataMapping
 {
     public class HeartData
     {

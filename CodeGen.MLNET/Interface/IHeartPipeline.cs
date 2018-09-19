@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.ML;
+﻿using Microsoft.ML;
 using Microsoft.ML.Runtime.Data;
 
-namespace CodeGen.ML.Interface
+namespace CodeGen.MLNET.Interface
 {
     public interface IHeartPipeline
     {

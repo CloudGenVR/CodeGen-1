@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CodeGen.Core\CodeGen.Core.csproj" />
+    <ProjectReference Include="..\CodeGen.MLNET\CodeGen.MLNET.csproj" />
   </ItemGroup>
 
 </Project>

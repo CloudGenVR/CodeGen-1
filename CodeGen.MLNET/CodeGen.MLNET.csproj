@@ -2,11 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CodeGen.MLNET\CodeGen.MLNET.csproj" />
+    <PackageReference Include="Microsoft.ML" Version="0.5.0" />
   </ItemGroup>
 
 </Project>
