@@ -1,1 +1,0 @@
-﻿Scaffold-DbContext "Server=cloudgenverona.database.windows.net;Database=CloudGen-Sql;Trusted_Connection=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models
