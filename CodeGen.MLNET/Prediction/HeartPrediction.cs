@@ -5,6 +5,9 @@ namespace CodeGen.MLNET.Prediction
     public class HeartPrediction
     {
         [ColumnName("PredictedLabel")]
-        public bool PredictedLabel;
+        public uint ExpectedDigit; // <-- This is the predicted value
+
+        //[ColumnName("Score")]
+        //public float[] Score;
     }
 }

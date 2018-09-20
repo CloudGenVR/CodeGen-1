@@ -61,12 +61,11 @@ namespace CodeGen.MLNET.DataMapping
 
         public float Thal;
 
-        [Column("13")]        
-        public float Num;
-
-        [Column("14")]
+        [Column("13")]
         [ColumnName("Label")]
         public float Label;
+
+  
 
     }
 }
