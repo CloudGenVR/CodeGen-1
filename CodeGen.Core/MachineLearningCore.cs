@@ -7,61 +7,73 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using CodeGen.Core.Model;
 using Microsoft.ML.Models;
 
 namespace CodeGen.Core
 {
-    public class MachineLearningCore
+    public static class MachineLearningCore
     {
-        private readonly ILearningPipelineItem _algorythm;
-
-      
-        public MachineLearningCore(ILearningPipelineItem algorythm)
+        /// <summary>
+        /// Get the prediction by request.
+        /// I use the model created before
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <typeparam name="TPrediction"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static async Task<TPrediction> PredictionByModel<TData, TPrediction>(PredictionModelRequest<TData> request) where TData : class where TPrediction : class, new()
         {
-            _algorythm = algorythm;
+            var model = await PredictionModel.ReadAsync<TData, TPrediction>(request.ModelFilePath);
+            return model.Predict(request.PredictionModelType);
         }
 
 
-        public static async Task<TPrediction> PredictionByModel<TData, TPrediction>(TData data, string modelPath) where TData : class where TPrediction : class, new()
+        /// <summary>
+        /// Train and Save model by TrainRequest obj.
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <typeparam name="TPrediction"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public static async Task<bool> TrainAndSaveModel<TData, TPrediction>(TrainRequest request) where TData : class where TPrediction : class, new()
         {
-            var model = await PredictionModel.ReadAsync<TData, TPrediction>(modelPath);
-
-            return model.Predict(data);
-        }
-
-        public static async Task<bool> TrainAndSaveModel<TData, TPrediction>(string filePath, string modelToSave) where TData : class where TPrediction : class, new()
-        {
-            if (File.Exists(modelToSave))
+            if (File.Exists(request.ModelFilePath))
             {
-                File.Delete(modelToSave);
+                File.Delete(request.ModelFilePath);
             }
       
-            var model = await CreateModelWithPipeline<TData, TPrediction>(filePath, true, ',', "PredictedLabel");
+            var model = await CreateModelWithPipeline<TData, TPrediction>(request);
 
-            await model.WriteAsync(modelToSave);
+            await model.WriteAsync(request.ModelFilePath);
 
             return true;
         }
 
 
-        private static async Task<PredictionModel> CreateModelWithPipeline<TData, TPrediction>(string dataPath, bool useHeader, char separator, string predictedLabel) where TData : class where TPrediction : class, new()
+        /// <summary>
+        /// Create the pipeline with data send in request
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <typeparam name="TPrediction"></typeparam>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        private static async Task<PredictionModel> CreateModelWithPipeline<TData, TPrediction>(TrainRequest request) where TData : class where TPrediction : class, new()
         {
 
-            List<string> properties = typeof(TData).GetFields().Select(o => o.Name).ToList();
+            List<string> properties = GetPropertiesFromDataSetByType<TData>();
+
             try
             {
+                // Pipeline build.
                 var learningPipeline = new LearningPipeline
                 {
-                    new TextLoader(dataPath).CreateFrom<TData>(useHeader: true, separator: ','),
-                    new ColumnConcatenator("Features", "Age", "Sex", "Cp", "TrestBps", "Chol", "Fbs", "Restecg", "Thalach", "Exang", "OldPeak", "Slope", "Ca", "Thal"),
-                    new NaiveBayesClassifier
-                    {
-                        NormalizeFeatures = NormalizeOption.Auto,
-                        Caching = CachingOptions.Memory
-                    },
+                    new TextLoader(request.FilePath).CreateFrom<TData>(useHeader: request.UseHeader, separator: request.Separator),
+                    new ColumnConcatenator("Features", properties.ToArray()),
+                    request.Algorythm,
                 };
-
-                var model = learningPipeline.Train<TData, TPrediction>();
+                
+                var model = learningPipeline.Train<TData, TPrediction>(); 
 
                 return model;
             }
@@ -70,6 +82,19 @@ namespace CodeGen.Core
                 return null;
             }
 
+        }
+
+        /// <summary>
+        /// Get all props from dataset.
+        /// Important for the columnconcatenator in Features column
+        /// </summary>
+        /// <typeparam name="TData"></typeparam>
+        /// <returns></returns>
+        private static List<string> GetPropertiesFromDataSetByType<TData>() where TData : class
+        {
+            var properties = typeof(TData).GetFields().Select(o => o.Name).ToList();
+            properties.Remove("Label");
+            return properties;
         }
 
     }

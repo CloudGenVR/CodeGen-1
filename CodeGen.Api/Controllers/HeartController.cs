@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CodeGen.Core;
-
+using CodeGen.Core.Model;
 using CodeGen.MLNET.DataMapping;
 using CodeGen.MLNET.Prediction;
 using Microsoft.AspNetCore.Mvc;
@@ -49,10 +49,12 @@ namespace CodeGen.Api.Controllers
 
         
         [HttpPost("TrainAndSaveModel", Name = "TrainAndSaveModel")]
-        public async Task<IActionResult> TrainAndSaveModel([FromBody] string dataPath, string modelFile)
+        public async Task<IActionResult> TrainAndSaveModel([FromBody] TrainRequest trainModel)
         {
+
             var dateString = DateTime.Now.ToString("dd_MM_yyyy_HHmm");
-            var model = await MachineLearningCore.TrainAndSaveModel<HeartData, HeartPrediction>(@"../CodeGen.MLNET/Data/heart-dataset.csv", "../CodeGen.MLNET/Data/heart-model-"+ dateString + ".zip");
+            // @"../CodeGen.MLNET/Data/heart-dataset.csv", "../CodeGen.MLNET/Data/heart-model-"+ dateString + ".zip",',');
+            var model = await MachineLearningCore.TrainAndSaveModel<HeartData, HeartPrediction>(trainModel);
             return Ok(true);
         }
 
