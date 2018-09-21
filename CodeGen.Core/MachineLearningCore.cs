@@ -25,7 +25,7 @@ namespace CodeGen.Core
         public static async Task<TPrediction> PredictionByModel<TData, TPrediction>(PredictionModelRequest<TData> request) where TData : class where TPrediction : class, new()
         {
             var model = await PredictionModel.ReadAsync<TData, TPrediction>(request.ModelFilePath);
-            return model.Predict(request.PredictionModelType);
+            return model.Predict(request.ObjectToPredict);
         }
 
 

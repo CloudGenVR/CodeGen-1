@@ -7,7 +7,7 @@ namespace CodeGen.Core.Model
 {
     public class PredictionModelRequest<TData>
     {
-        public TData PredictionModelType { get; set; }
+        public TData ObjectToPredict { get; set; }
         public string ModelFilePath { get; set; }
 
     }
